@@ -1,5 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
+// @Copyright devdastour 2019 - 2021 All Right Reserved
 #pragma once
 
 #include "CoreMinimal.h"
@@ -14,6 +13,3 @@ class ARushBGameMode : public AGameModeBase
 public:
 	ARushBGameMode();
 };
-
-
-

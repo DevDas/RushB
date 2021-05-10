@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// @Copyright devdastour 2019 - 2021 All Right Reserved
 
 #include "RushBGameMode.h"
 #include "RushBCharacter.h"
@@ -6,10 +6,5 @@
 
 ARushBGameMode::ARushBGameMode()
 {
-	// set default pawn class to our Blueprinted character
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/Blueprints/ThirdPersonCharacter"));
-	if (PlayerPawnBPClass.Class != NULL)
-	{
-		DefaultPawnClass = PlayerPawnBPClass.Class;
-	}
+
 }

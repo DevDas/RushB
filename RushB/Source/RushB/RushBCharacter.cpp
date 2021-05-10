@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// @Copyright devdastour 2019 - 2021 All Right Reserved
 
 #include "RushBCharacter.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
@@ -8,16 +8,17 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Components\SkeletalMeshComponent.h"
 
 //////////////////////////////////////////////////////////////////////////
 // ARushBCharacter
 
 ARushBCharacter::ARushBCharacter()
 {
-	// Set size for collision capsule
+	PrimaryActorTick.bStartWithTickEnabled = false;
+
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
-	// set our turn rates for input
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
 
@@ -43,12 +44,13 @@ ARushBCharacter::ARushBCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
-	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
-}
+	FPPCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FPPCamera"));
+	FPPCamera->SetupAttachment(RootComponent);
+	FPPCamera->SetRelativeLocation(FVector(0.f, 0.f, 70.f));
 
-//////////////////////////////////////////////////////////////////////////
-// Input
+	FPArms = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FPArms"));
+	FPArms->SetupAttachment(FPPCamera);
+}
 
 void ARushBCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
@@ -71,21 +73,6 @@ void ARushBCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInp
 	// handle touch devices
 	PlayerInputComponent->BindTouch(IE_Pressed, this, &ARushBCharacter::TouchStarted);
 	PlayerInputComponent->BindTouch(IE_Released, this, &ARushBCharacter::TouchStopped);
-
-	// VR headset functionality
-	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &ARushBCharacter::OnResetVR);
-}
-
-
-void ARushBCharacter::OnResetVR()
-{
-	// If RushB is added to a project via 'Add Feature' in the Unreal Editor the dependency on HeadMountedDisplay in RushB.Build.cs is not automatically propagated
-	// and a linker error will result.
-	// You will need to either:
-	//		Add "HeadMountedDisplay" to [YourProject].Build.cs PublicDependencyModuleNames in order to build successfully (appropriate if supporting VR).
-	// or:
-	//		Comment or delete the call to ResetOrientationAndPosition below (appropriate if not supporting VR)
-	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
 }
 
 void ARushBCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)

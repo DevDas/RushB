@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// @Copyright devdastour 2019 - 2021 All Right Reserved
 
 #include "RushB.h"
 #include "Modules/ModuleManager.h"
