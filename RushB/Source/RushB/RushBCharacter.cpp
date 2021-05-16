@@ -18,13 +18,14 @@ ARushBCharacter::ARushBCharacter()
 	PrimaryActorTick.bStartWithTickEnabled = false;
 
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
+	GetMesh()->bOwnerNoSee = true;
 
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
 
 	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = false;
+	bUseControllerRotationYaw = true;
 	bUseControllerRotationRoll = false;
 
 	// Configure character movement
@@ -34,7 +35,7 @@ ARushBCharacter::ARushBCharacter()
 	GetCharacterMovement()->AirControl = 0.2f;
 
 	// Create a camera boom (pulls in towards the player if there is a collision)
-	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
+	/*CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->TargetArmLength = 300.0f; // The camera follows at this distance behind the character	
 	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
@@ -42,14 +43,18 @@ ARushBCharacter::ARushBCharacter()
 	// Create a follow camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
-	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm*/
 
 	FPPCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FPPCamera"));
 	FPPCamera->SetupAttachment(RootComponent);
 	FPPCamera->SetRelativeLocation(FVector(0.f, 0.f, 70.f));
+	FPPCamera->bUsePawnControlRotation = true;
 
 	FPArms = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FPArms"));
 	FPArms->SetupAttachment(FPPCamera);
+	FPArms->bOnlyOwnerSee = true;
+
+	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
 }
 
 void ARushBCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -58,6 +63,9 @@ void ARushBCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInp
 	check(PlayerInputComponent);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+
+	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &ARushBCharacter::StartCrouch);
+	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &ARushBCharacter::StopCrouch);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &ARushBCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ARushBCharacter::MoveRight);
