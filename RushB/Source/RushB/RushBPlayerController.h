@@ -6,6 +6,9 @@
 #include "GameFramework/PlayerController.h"
 #include "RushBPlayerController.generated.h"
 
+class UUMGBase;
+class UJoinMapUI;
+
 /**
  * 
  */
@@ -14,4 +17,16 @@ class RUSHB_API ARushBPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 	
+public:
+	ARushBPlayerController(const FObjectInitializer& ObjectInitializer);
+
+protected:
+
+	virtual void BeginPlay() override;
+
+	void SetStartScreen();
+
+private:
+
+	TSubclassOf<UUMGBase> JoinMapUIClass;
 };

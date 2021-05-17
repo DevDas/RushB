@@ -12,4 +12,6 @@ class ARushBGameMode : public AGameModeBase
 
 public:
 	ARushBGameMode();
+
+	virtual void BeginPlay() override;
 };

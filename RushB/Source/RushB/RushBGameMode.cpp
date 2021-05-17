@@ -8,3 +8,10 @@ ARushBGameMode::ARushBGameMode()
 {
 
 }
+
+void ARushBGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+
+
+}
